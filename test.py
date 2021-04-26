@@ -17,7 +17,7 @@ def get_args():
     parser.add_argument("--data_path", type=str, default="data", help="The root folder of dataset")
     parser.add_argument("--cls_threshold", type=float, default=0.5)
     parser.add_argument("--nms_threshold", type=float, default=0.5)
-    parser.add_argument("--pretrained_model", type=str, default="trained_models/efficientdet.pth")
+    parser.add_argument("--pretrained_model", type=str, default="trained_models/efficientdet-final.pth")
     parser.add_argument("--output", type=str, default="predictions")
     args = parser.parse_args()
 
@@ -36,6 +36,8 @@ def test(opt):
     if os.path.isdir(opt.output):
         shutil.rmtree(opt.output)
     os.makedirs(opt.output)
+    for c in dataset.class_names:
+        os.makedirs(os.path.join(opt.output, c.lower()))
 
     for idx in tqdm(range(len(dataset))):
         data = dataset[idx]

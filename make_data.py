@@ -78,7 +78,12 @@ def setup_data(opt):
         except Exception as e:
             print(e)
 
-    print('Done!')
+    print('Done!\n==========================')
+    print('Downloaded images:')
+    for c in OPEN_IMAGES_CLASSES:
+        train = glob2.glob(f'{opt.data_path}/train/{c}/images/*jpg')
+        val = glob2.glob(f'{opt.data_path}/val/{c}/images/*jpg')
+        print(f'{c.capitalize()}: {len(train)} training, {len(val)} validation')
 
 
 if __name__ == "__main__":

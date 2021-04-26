@@ -110,4 +110,7 @@ data/
 predictions/
 demo/
 tensorboard/
-
+web/uploads/*
+*.gif
+*.png
+*.jpg

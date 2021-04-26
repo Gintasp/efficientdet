@@ -35,6 +35,7 @@ def get_args():
     parser.add_argument("--data_path", type=str, default="data", help="the root folder of dataset")
     parser.add_argument("--log_path", type=str, default="tensorboard/signatrix_efficientdet_coco")
     parser.add_argument("--saved_path", type=str, default="trained_models")
+    parser.add_argument("--num_samples", type=int, default=100, help="number of training images to download")
 
     args = parser.parse_args()
     return args
@@ -196,19 +197,21 @@ def create_test_data(class_name):
             print(e)
 
 
-def setup_data():
-    data_dir = "data"
-    number_for_samples = 100
+def setup_data(opt):
+    data_dir = opt.data_path
+    number_for_samples = opt.num_samples
 
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
     else:
+        print('Data already downloaded, skipping...')
         return
 
     print('Downloading data...')
     download_dataset(data_dir, [c.capitalize for c in OPEN_IMAGES_CLASSES],
                      limit=number_for_samples, annotation_format="pascal")
 
+    print('Creating data folder structure...')
     for c in OPEN_IMAGES_CLASSES:
         os.makedirs(f'data/train/{c}/images', exist_ok=True)
         os.makedirs(f'data/test/{c}/images', exist_ok=True)
@@ -227,9 +230,6 @@ def setup_data():
 
 
 if __name__ == "__main__":
-    # Data setup
-    setup_data()
-
-    # Actual training
     opt = get_args()
+    setup_data(opt)
     train(opt)

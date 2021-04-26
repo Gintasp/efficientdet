@@ -1,10 +1,78 @@
 import os
+
+import xml.etree.ElementTree as ET
+import glob2
 import torch
 import numpy as np
 
 from torch.utils.data import Dataset, DataLoader
 from pycocotools.coco import COCO
 import cv2
+
+from src.config import OPEN_IMAGES_CLASSES
+
+
+class OpenImagesDataset(Dataset):
+    def __init__(self, root_dir='data', class_names=OPEN_IMAGES_CLASSES, set_name='train', transform=None):
+        self.root_dir = root_dir
+        self.set_name = set_name
+        self.transform = transform
+        self.class_names = class_names
+
+        self.images = []
+        self.image_to_category_name = {}
+
+        self.load_images()
+
+    def load_images(self):
+        for c in self.class_names:
+            meta_files = glob2.glob(f"{self.root_dir}/{self.set_name}/{c}/images/*jpg")
+            for f in meta_files:
+                self.images.append(f[-20:-4])
+                self.image_to_category_name[f[-20:-4]] = c
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        img = self.get_image(idx)
+        annot = self.get_annotations(idx)
+        sample = {'img': img, 'annot': annot}
+
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample
+
+    def get_image(self, idx):
+        path = f'{self.root_dir}/{self.set_name}/{self.image_to_category_name[self.images[idx]]}/images/{self.images[idx]}.jpg'
+        img = cv2.imread(path)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        return img.astype(np.float32) / 255.
+
+    def get_annotations(self, idx):
+        class_name = self.image_to_category_name[self.images[idx]]
+        path = f'{self.root_dir}/{self.set_name}/{class_name}/pascal/{self.images[idx]}.xml'
+
+        tree = ET.parse(path)
+        root = tree.getroot()
+
+        annotations = np.zeros((0, 5))
+        for obj in root.findall('object'):
+            x1 = int(obj.find('bndbox').find('xmin').text)
+            x2 = int(obj.find('bndbox').find('xmax').text)
+            y1 = int(obj.find('bndbox').find('ymin').text)
+            y2 = int(obj.find('bndbox').find('ymax').text)
+            annotation = np.zeros((1, 5))
+            annotation[0, :4] = [x1, y1, x2, y2]
+            annotation[0, 4] = self.class_names.index(class_name)
+            annotations = np.append(annotations, annotation, axis=0)
+
+        return annotations
+
+    def num_classes(self):
+        return len(self.class_names)
 
 
 class CocoDataset(Dataset):

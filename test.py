@@ -73,7 +73,7 @@ def test(opt):
                     (int(x1), int(y1 + text_size[1] + 4)), cv2.FONT_HERSHEY_PLAIN, 1,
                     (255, 255, 255), 1)
 
-            cv2.imwrite(f"{opt.output}/{dataset.images[idx]}_prediction.jpg", output_image)
+            cv2.imwrite(f"{opt.output}/{class_name}/{dataset.images[idx]}_prediction.jpg", output_image)
 
 
 if __name__ == "__main__":

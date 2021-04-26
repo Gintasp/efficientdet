@@ -9,7 +9,6 @@ from src.dataset import Resizer, Normalizer
 from src.config import OPEN_IMAGES_COLORS, OPEN_IMAGES_CLASSES
 import cv2
 import ntpath
-import matplotlib.pyplot as plt
 
 
 def get_args():
@@ -76,14 +75,14 @@ def demo(opt):
                 (int(x1), int(y1 + text_size[1] + 4)), cv2.FONT_HERSHEY_PLAIN, 1,
                 (255, 255, 255), 1)
 
-        plt.imshow(cv2.cvtColor(output_image, cv2.COLOR_BGR2RGB))
-        plt.axis('off')
-        plt.show()
+        out_filename = os.path.splitext(ntpath.basename(opt.image_path))[0]
+        cv2.imshow(out_filename, output_image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         if opt.output_dir is not None:
             if not os.path.isdir(opt.output_dir):
                 os.makedirs(opt.output_dir)
-            out_filename = os.path.splitext(ntpath.basename(opt.image_path))[0]
             cv2.imwrite(f"{opt.output_dir}/{out_filename}_prediction.jpg", output_image)
 
 

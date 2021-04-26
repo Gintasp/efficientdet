@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 def get_args():
     parser = argparse.ArgumentParser(
         "EfficientDet: Scalable and Efficient Object Detection implementation by Signatrix GmbH")
-    parser.add_argument("--image_path", type=str, default="data", help="Image path to perform localization on")
+    parser.add_argument("--image_path", type=str, default=None, help="Image path to perform localization on")
     parser.add_argument("--cls_threshold", type=float, default=0.5)
     parser.add_argument("--pretrained_model", type=str, default="trained_models/efficientdet-final.pth")
     parser.add_argument("--output_dir", type=str, default=None)

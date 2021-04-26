@@ -11,8 +11,7 @@ import shutil
 
 
 def get_args():
-    parser = argparse.ArgumentParser(
-        "EfficientDet: Scalable and Efficient Object Detection implementation by Signatrix GmbH")
+    parser = argparse.ArgumentParser("EfficientDet: Scalable and Efficient Object Detection")
     parser.add_argument("--image_size", type=int, default=512, help="The common width and height for all images")
     parser.add_argument("--data_path", type=str, default="data", help="The root folder of dataset")
     parser.add_argument("--cls_threshold", type=float, default=0.5)

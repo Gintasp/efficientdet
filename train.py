@@ -15,8 +15,7 @@ from tqdm.autonotebook import tqdm
 
 
 def get_args():
-    parser = argparse.ArgumentParser(
-        "EfficientDet: Scalable and Efficient Object Detection implementation by Signatrix GmbH")
+    parser = argparse.ArgumentParser("EfficientDet: Scalable and Efficient Object Detection")
     parser.add_argument("--image_size", type=int, default=512, help="The common width and height for all images")
     parser.add_argument("--batch_size", type=int, default=8, help="The number of images per batch")
     parser.add_argument("--lr", type=float, default=1e-4)
@@ -115,13 +114,14 @@ def train(opt):
                 epoch_loss.append(float(loss))
                 total_loss = np.mean(epoch_loss)
 
-                progress_bar.set_description(
-                    'Epoch: {}/{}. Iteration: {}/{}. Cls loss: {:.5f}. Reg loss: {:.5f}. Batch loss: {:.5f} Total loss: {:.5f}'.format(
-                        epoch + 1, opt.num_epochs, iter + 1, num_iter_per_epoch, cls_loss, reg_loss, loss,
-                        total_loss))
+                progress_bar.set_description(f'Epoch: {epoch + 1}/{opt.num_epochs} | '
+                                             f'Iteration: {iter + 1}/{num_iter_per_epoch} | '
+                                             f'Cls loss: {cls_loss:.5f}. Reg loss: {reg_loss:.5f} | '
+                                             f'Batch loss: {loss:.5f} Total loss: {total_loss:.5f}')
+
                 writer.add_scalar('Train/Total_loss', total_loss, epoch * num_iter_per_epoch + iter)
                 writer.add_scalar('Train/Regression_loss', reg_loss, epoch * num_iter_per_epoch + iter)
-                writer.add_scalar('Train/Classfication_loss (focal loss)', cls_loss, epoch * num_iter_per_epoch + iter)
+                writer.add_scalar('Train/Classification_loss (focal loss)', cls_loss, epoch * num_iter_per_epoch + iter)
 
             except Exception as e:
                 print(e)
@@ -149,13 +149,13 @@ def train(opt):
             reg_loss = np.mean(loss_regression_ls)
             loss = cls_loss + reg_loss
 
-            print(
-                'Epoch: {}/{}. Classification loss: {:1.5f}. Regression loss: {:1.5f}. Total loss: {:1.5f}'.format(
-                    epoch + 1, opt.num_epochs, cls_loss, reg_loss,
-                    np.mean(loss)))
+            print(f'Epoch: {epoch + 1}/{opt.num_epochs} | '
+                  f'Classification loss: {cls_loss:1.5f} | '
+                  f'Regression loss: {reg_loss:1.5f} | Total loss: {np.mean(loss):1.5f}')
+
             writer.add_scalar('Test/Total_loss', loss, epoch)
             writer.add_scalar('Test/Regression_loss', reg_loss, epoch)
-            writer.add_scalar('Test/Classfication_loss (focal loss)', cls_loss, epoch)
+            writer.add_scalar('Test/Classification_loss (focal loss)', cls_loss, epoch)
 
             if loss + opt.es_min_delta < best_loss:
                 best_loss = loss
@@ -164,7 +164,7 @@ def train(opt):
 
             # Early stopping
             if epoch - best_epoch > opt.es_patience > 0:
-                print("Stop training at epoch {}. The lowest loss achieved is {}".format(epoch, loss))
+                print(f"Stop training at epoch {epoch}. The lowest loss achieved is {loss}")
                 break
 
     torch.save(model, os.path.join(opt.saved_path, f'{opt.model_name}-final.pth'))

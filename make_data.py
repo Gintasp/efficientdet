@@ -11,8 +11,7 @@ from src.config import OPEN_IMAGES_CLASSES
 
 
 def get_args():
-    parser = argparse.ArgumentParser(
-        "EfficientDet: Scalable and Efficient Object Detection implementation by Signatrix GmbH")
+    parser = argparse.ArgumentParser("EfficientDet: Scalable and Efficient Object Detection")
     parser.add_argument("--num_samples", type=int, default=100, help="Number of total images to download")
     parser.add_argument("--data_path", type=str, default="data", help="The root folder of dataset")
     args = parser.parse_args()

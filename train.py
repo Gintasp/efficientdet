@@ -208,7 +208,7 @@ def setup_data(opt):
         return
 
     print('Downloading data...')
-    download_dataset(data_dir, [c.capitalize for c in OPEN_IMAGES_CLASSES],
+    download_dataset(data_dir, [c.capitalize() for c in OPEN_IMAGES_CLASSES],
                      limit=number_for_samples, annotation_format="pascal")
 
     print('Creating data folder structure...')

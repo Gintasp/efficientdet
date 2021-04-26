@@ -31,7 +31,7 @@ def get_args():
     parser.add_argument("--data_path", type=str, default="data", help="the root folder of dataset")
     parser.add_argument("--log_path", type=str, default="tensorboard/signatrix_efficientdet_coco")
     parser.add_argument("--saved_path", type=str, default="trained_models")
-    parser.add_argument("--model_name", type=str, default="efficientdet.pth")
+    parser.add_argument("--model_name", type=str, default="efficientdet")
 
     args = parser.parse_args()
     return args
@@ -160,14 +160,14 @@ def train(opt):
             if loss + opt.es_min_delta < best_loss:
                 best_loss = loss
                 best_epoch = epoch
-                torch.save(model, os.path.join(opt.saved_path, opt.model_name))
+                torch.save(model, os.path.join(opt.saved_path, f'{opt.model_name}.pth'))
 
             # Early stopping
             if epoch - best_epoch > opt.es_patience > 0:
                 print("Stop training at epoch {}. The lowest loss achieved is {}".format(epoch, loss))
                 break
 
-    torch.save(model, os.path.join(opt.saved_path, f'{opt.model_name}-final'))
+    torch.save(model, os.path.join(opt.saved_path, f'{opt.model_name}-final.pth'))
     writer.close()
 
 

@@ -18,6 +18,7 @@ def get_args():
     parser.add_argument("--cls_threshold", type=float, default=0.5)
     parser.add_argument("--pretrained_model", type=str, default="trained_models/efficientdet-final.pth")
     parser.add_argument("--output_dir", type=str, default=None)
+    parser.add_argument("--show", type=bool, default=False, help="Display prediction on screen")
     args = parser.parse_args()
 
     return args
@@ -76,9 +77,10 @@ def demo(opt):
                 (255, 255, 255), 1)
 
         out_filename = os.path.splitext(ntpath.basename(opt.image_path))[0]
-        cv2.imshow(out_filename, output_image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        if opt.show:
+            cv2.imshow(out_filename, output_image)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
 
         if opt.output_dir is not None:
             if not os.path.isdir(opt.output_dir):

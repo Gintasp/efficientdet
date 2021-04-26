@@ -1,21 +1,17 @@
-import math
 import os
 import argparse
 
-import glob2 as glob2
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
-from src.config import OPEN_IMAGES_CLASSES
 from src.dataset import Resizer, Normalizer, Augmenter, collater, OpenImagesDataset
 from src.model import EfficientDet
 from tensorboardX import SummaryWriter
 import shutil
 import numpy as np
 from tqdm.autonotebook import tqdm
-from openimages.download import download_dataset
 
 
 def get_args():
@@ -35,13 +31,16 @@ def get_args():
     parser.add_argument("--data_path", type=str, default="data", help="the root folder of dataset")
     parser.add_argument("--log_path", type=str, default="tensorboard/signatrix_efficientdet_coco")
     parser.add_argument("--saved_path", type=str, default="trained_models")
-    parser.add_argument("--num_samples", type=int, default=100, help="number of training images to download")
 
     args = parser.parse_args()
     return args
 
 
 def train(opt):
+    if not os.path.isdir(opt.data_path):
+        print(f"Data for dataset not found at {opt.data_path}")
+        return
+
     num_gpus = 1
     if torch.cuda.is_available():
         num_gpus = torch.cuda.device_count()
@@ -65,7 +64,7 @@ def train(opt):
                                      transform=transforms.Compose([Normalizer(), Augmenter(), Resizer()]))
     training_loader = DataLoader(training_set, **training_params)
 
-    test_set = OpenImagesDataset(root_dir=opt.data_path, set_name="test",
+    test_set = OpenImagesDataset(root_dir=opt.data_path, set_name="val",
                                  transform=transforms.Compose([Normalizer(), Resizer()]))
     test_loader = DataLoader(test_set, **test_params)
 
@@ -171,65 +170,6 @@ def train(opt):
     writer.close()
 
 
-def create_train_data(class_name):
-    print(f"\nCreating train data for class \'{class_name}\'")
-    img_files = glob2.glob(f"data/{class_name}/images/*jpg")
-    print(f"Train images: {math.ceil(len(img_files) * .9)}")
-    for f in tqdm(img_files[:math.ceil(len(img_files) * .9)]):  # Use 90% of images for training
-        try:
-            id = f[-20:-4]
-            os.replace(f'data/{class_name}/images/{id}.jpg', f'data/train/{class_name}/images/{id}.jpg', )
-            os.replace(f'data/{class_name}/pascal/{id}.xml', f'data/train/{class_name}/pascal/{id}.xml')
-        except Exception as e:
-            print(e)
-
-
-def create_test_data(class_name):
-    print(f"\nCreating test data for class \'{class_name}\'")
-    img_files = glob2.glob(f"data/{class_name}/images/*jpg")
-    print(f"Test images: {math.ceil(len(img_files) * .9)}")
-    for f in tqdm(img_files[:math.ceil(len(img_files) * .9)]):  # Use remaining 10% of images for testing
-        try:
-            id = f[-20:-4]
-            os.replace(f'data/{class_name}/images/{id}.jpg', f'data/test/{class_name}/images/{id}.jpg')
-            os.replace(f'data/{class_name}/pascal/{id}.xml', f'data/test/{class_name}/pascal/{id}.xml')
-        except Exception as e:
-            print(e)
-
-
-def setup_data(opt):
-    data_dir = opt.data_path
-    number_for_samples = opt.num_samples
-
-    if not os.path.exists(data_dir):
-        os.makedirs(data_dir)
-    else:
-        print('Data already downloaded, skipping...')
-        return
-
-    print('Downloading data...')
-    download_dataset(data_dir, [c.capitalize() for c in OPEN_IMAGES_CLASSES],
-                     limit=number_for_samples, annotation_format="pascal")
-
-    print('Creating data folder structure...')
-    for c in OPEN_IMAGES_CLASSES:
-        os.makedirs(f'data/train/{c}/images', exist_ok=True)
-        os.makedirs(f'data/test/{c}/images', exist_ok=True)
-        os.makedirs(f'data/train/{c}/pascal', exist_ok=True)
-        os.makedirs(f'data/test/{c}/pascal', exist_ok=True)
-
-    for c in OPEN_IMAGES_CLASSES:
-        try:
-            create_train_data(c)
-            create_test_data(c)
-            shutil.rmtree(f'data/{c}')
-        except Exception as e:
-            print(e)
-
-    print('Done!')
-
-
 if __name__ == "__main__":
     opt = get_args()
-    setup_data(opt)
     train(opt)

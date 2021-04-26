@@ -5,7 +5,7 @@ import glob2
 import torch
 import numpy as np
 
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from pycocotools.coco import COCO
 import cv2
 

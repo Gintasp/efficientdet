@@ -14,10 +14,10 @@ def get_args():
     parser = argparse.ArgumentParser(
         "EfficientDet: Scalable and Efficient Object Detection implementation by Signatrix GmbH")
     parser.add_argument("--image_size", type=int, default=512, help="The common width and height for all images")
-    parser.add_argument("--data_path", type=str, default="data", help="the root folder of dataset")
+    parser.add_argument("--data_path", type=str, default="data", help="The root folder of dataset")
     parser.add_argument("--cls_threshold", type=float, default=0.5)
     parser.add_argument("--nms_threshold", type=float, default=0.5)
-    parser.add_argument("--pretrained_model", type=str, default="trained_models/efficientdet-final.pth")
+    parser.add_argument("--pretrained_model", type=str, default="trained_models/efficientdet.pth")
     parser.add_argument("--output", type=str, default="predictions")
     args = parser.parse_args()
 
@@ -30,7 +30,7 @@ def test(opt):
     else:
         model = torch.load(opt.pretrained_model, map_location=torch.device('cpu')).module
 
-    dataset = OpenImagesDataset(root_dir=opt.data_path, set_name='test',
+    dataset = OpenImagesDataset(root_dir=opt.data_path, set_name='val',
                                 transform=transforms.Compose([Normalizer(), Resizer()]))
 
     if os.path.isdir(opt.output):
@@ -49,7 +49,7 @@ def test(opt):
 
         if boxes.shape[0] > 0:
             class_name = dataset.image_to_category_name[dataset.images[idx]]
-            path = f'{opt.data_path}/test/{class_name}/images/{dataset.images[idx]}.jpg'
+            path = f'{opt.data_path}/val/{class_name}/images/{dataset.images[idx]}.jpg'
             output_image = cv2.imread(path)
 
             for box_id in range(boxes.shape[0]):

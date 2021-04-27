@@ -21,7 +21,7 @@ def get_args():
     parser.add_argument("--data_path", type=str, default="data", help="The root folder of dataset")
     parser.add_argument("--cls_threshold", type=float, default=0.5)
     parser.add_argument("--nms_threshold", type=float, default=0.5)
-    parser.add_argument("--model", type=str, default="trained_models/efficientdet.pth")
+    parser.add_argument("--model", type=str, default="trained_models/efficientdet10-100000.pth")
     parser.add_argument("--output", type=str, default="predictions")
     args = parser.parse_args()
 

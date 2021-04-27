@@ -18,13 +18,14 @@ from src.config import OPEN_IMAGES_COLORS, OPEN_IMAGES_CLASSES
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 UPLOADS_PATH = 'web/uploads'
+MODELS_DIR = 'trained_models'
 
 
-def predict(filename, thresh=0.5, model='trained_models/efficientdet10-60000-final.pth'):
+def predict(filename, thresh=0.5, model='efficientdet10-100000.pth'):
     if torch.cuda.is_available():
-        model = torch.load(model).module.cuda()
+        model = torch.load(f'{MODELS_DIR}/{model}').module.cuda()
     else:
-        model = torch.load(model, map_location=torch.device('cpu')).module
+        model = torch.load(f'{MODELS_DIR}/{model}', map_location=torch.device('cpu')).module
 
     path = f'{UPLOADS_PATH}/{filename}'
     data = get_image_data(path)
@@ -82,7 +83,7 @@ def post():
     path = f'web/uploads/{filename}'
     file.save(path)
 
-    predict(filename)
+    predict(filename, model=request.args.get('model'))
     out_filename = os.path.splitext(ntpath.basename(path))[0]
 
     return send_file(f'{UPLOADS_PATH}/{out_filename}_prediction.jpg')

@@ -32,7 +32,7 @@ def get_args():
                         help="Early stopping's parameter: minimum change loss to qualify as an improvement")
     parser.add_argument("--es_patience", type=int, default=0,
                         help="Early stopping's parameter: number of epochs with no improvement after which training will be stopped. Set to 0 to disable this technique.")
-    parser.add_argument("--data_path", type=str, default="data", help="the root folder of dataset")
+    parser.add_argument("--data_path", type=str, default="data", help="The root folder of dataset")
     parser.add_argument("--log_path", type=str, default="tensorboard")
     parser.add_argument("--saved_path", type=str, default="trained_models")
     parser.add_argument("--model_name", type=str, default="efficientdet")

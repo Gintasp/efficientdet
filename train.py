@@ -121,8 +121,8 @@ def train(opt):
 
                 progress_bar.set_description(f'Epoch: {epoch + 1}/{opt.num_epochs} | '
                                              f'Iteration: {iter + 1}/{num_iter_per_epoch} | '
-                                             f'Cls loss: {cls_loss:.5f}. Reg loss: {reg_loss:.5f} | '
-                                             f'Batch loss: {loss:.5f} Total loss: {total_loss:.5f}')
+                                             f'Cls loss: {cls_loss:.5f} | Reg loss: {reg_loss:.5f} | '
+                                             f'Batch loss: {loss:.5f} | Total loss: {total_loss:.5f}')
 
                 writer.add_scalar('Train/Total_loss', total_loss, epoch * num_iter_per_epoch + iter)
                 writer.add_scalar('Train/Regression_loss', reg_loss, epoch * num_iter_per_epoch + iter)

@@ -20,7 +20,7 @@ app.config["DEBUG"] = True
 UPLOADS_PATH = 'web/uploads'
 
 
-def predict(filename, thresh=0.5, model='trained_models/efficientdet-final.pth'):
+def predict(filename, thresh=0.5, model='trained_models/efficientdet10-60000-final.pth'):
     if torch.cuda.is_available():
         model = torch.load(model).module.cuda()
     else:

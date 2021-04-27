@@ -1,3 +1,8 @@
+"""
+Gintautas Plonis 1812957
+EfficientDet | Focal loss | Raven, Coffee, Headphones
+(Optional) REST API
+"""
 import math
 import os
 import shutil

@@ -13,7 +13,7 @@ from torchvision import transforms
 
 from src.dataset import Resizer, Normalizer, Augmenter, collater, OpenImagesDataset
 from src.model import EfficientDet
-from tensorboardX import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 import shutil
 import numpy as np
 from tqdm.autonotebook import tqdm
@@ -33,7 +33,7 @@ def get_args():
     parser.add_argument("--es_patience", type=int, default=0,
                         help="Early stopping's parameter: number of epochs with no improvement after which training will be stopped. Set to 0 to disable this technique.")
     parser.add_argument("--data_path", type=str, default="data", help="the root folder of dataset")
-    parser.add_argument("--log_path", type=str, default="tensorboard/efficientdet")
+    parser.add_argument("--log_path", type=str, default="tensorboard")
     parser.add_argument("--saved_path", type=str, default="trained_models")
     parser.add_argument("--model_name", type=str, default="efficientdet")
 
@@ -173,6 +173,7 @@ def train(opt):
                 break
 
     torch.save(model, os.path.join(opt.saved_path, f'{opt.model_name}-final.pth'))
+    writer.flush()
     writer.close()
 
 

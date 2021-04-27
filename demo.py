@@ -44,9 +44,9 @@ def get_image_data(path):
 
 def demo(opt):
     if torch.cuda.is_available():
-        model = torch.load(opt.pretrained_model).module.cuda()
+        model = torch.load(opt.model).module.cuda()
     else:
-        model = torch.load(opt.pretrained_model, map_location=torch.device('cpu')).module
+        model = torch.load(opt.model, map_location=torch.device('cpu')).module
 
     data = get_image_data(opt.image_path)
     scale = data['scale']

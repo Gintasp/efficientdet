@@ -30,9 +30,9 @@ def get_args():
 
 def test(opt):
     if torch.cuda.is_available():
-        model = torch.load(opt.pretrained_model).module.cuda()
+        model = torch.load(opt.model).module.cuda()
     else:
-        model = torch.load(opt.pretrained_model, map_location=torch.device('cpu')).module
+        model = torch.load(opt.model, map_location=torch.device('cpu')).module
 
     dataset = OpenImagesDataset(root_dir=opt.data_path, set_name='val',
                                 transform=transforms.Compose([Normalizer(), Resizer()]))
